@@ -1,7 +1,7 @@
 # 연속된 행 선택하기
 - 불필요한 행을 제외하고 선택하는 방법
 
-## 4행에서 16행까지 데이터만 가져와보자!
+## 4행에서 9행까지 데이터만 가져와보자!
 
 ![screen 5](https://i.imgur.com/WxwTiLJ.png)
 
@@ -15,7 +15,7 @@ filewriter = csv.writer(csv_out_file) # 쓰기용 파일
 row_counter = 1
 
 for row in filereader: # 읽기용 파일 내용을 한줄씩 읽으면서
-  if row_counter >= 4 and row_counter <= 16:  # 4행 ~ 16행 사이일때만
+  if row_counter >= 4 and row_counter <= 9:  # 4행 ~ 9행 사이일때만
     filewriter.writerow(row)  # 쓰기용 파일에 한줄씩 입력한다.
 
     row_counter = row_counter + 1  # 그 다음줄 행번호
@@ -26,7 +26,7 @@ for row in filereader: # 읽기용 파일 내용을 한줄씩 읽으면서
 
 ```python
 data_frame = pd.read_csv(input_file, header=None)
-data_frame = data_frame.drop([0,1,2,16,17,18])  # 지정한 행번호만 삭제한다.
+data_frame = data_frame.drop([0,1,2,9,10,11])  # 지정한 행번호만 삭제한다.
 
 data_frame.to_csv(output_file, index=False)
 
@@ -83,7 +83,11 @@ for row in filereader:
 
 # 연습문제
 
-1. 조건, 집합, 또는 정규 표현식에 따라 행을 필터링 하는 스크립트 중 하나를 수정하여 예제에서 필터링한 것과 다른 행을 출력하고, 출력 파일을 작성해보라
+## 연습문제 1
+- 문제 : 조건, 집합, 또는 정규 표현식에 따라 행을 필터링 하는 스크립트 중 하나를 수정하여 예제에서 필터링한 것과 다른 행을 출력하고, 출력 파일을 작성해보라
+- 풀이 : 입력 파일 중 Part Number가 7009 이거나 혹은 Cost가 $500.00 이상인 값을 출력하는 파일을 작성한다
+- 대상 파일 : [supplier_data.csv](https://github.com/cbrownley/foundations-for-analytics-with-python/blob/master/csv/supplier_data.csv)
+### 기본 파이썬
 
 ```python
 #!/usr/bin/env python3
@@ -107,12 +111,21 @@ with open(input_file, 'r', newline='') as input_file:
         for row_list in file_reader:
             part_number = row_list[2]
             cost = float(row_list[3].strip('$'))
+
+            # 조건에 맞는 행만 쓰기용 파일에 입력한다.
             if part_number == '7009' or cost >= 500.00:
                 file_writer.writerow(row_list)
 
 ```
+### 팬더스
+![screen 12](https://i.imgur.com/JdJAiBT.png)
 
-2. 인덱스 값 또는 열 헤더를 기반으로 열을 필터링하는 스크립트 중 하나를 수정하여 예제에서 필터링한 것과 다른 열을 출력하고, 출력 파일을 작성해보라
+## 연습문제 2
+- 문제 : 인덱스 값 또는 열 헤더를 기반으로 열을 필터링하는 스크립트 중 하나를 수정하여 예제에서 필터링한 것과 다른 열을 출력하고, 출력 파일을 작성해보라
+- 풀이 : supplier_data.csv 중에서 Invoice Number와 Cost 열의 값만을 따로 추출하여 파일로 작성한다.
+- 대상 파일 : [supplier_data.csv](https://github.com/cbrownley/foundations-for-analytics-with-python/blob/master/csv/supplier_data.csv)
+
+### 기본 파이썬
 
 ```python
 #!/usr/bin/env python3
@@ -132,18 +145,32 @@ with open(input_file, 'r', newline='') as input:
     with open(output_file, 'w', newline='') as output:
         file_reader = csv.reader(input)
         file_writer = csv.writer(output)
+
+        # 읽기용 파일에서 헤더 열 확인
         header = next(file_reader)
+
+        # 추출하려는 헤더 열의 인덱스 확인
         for name in column_name_list:
             column_index_list.append(header.index(name))
 
+        # 쓰기용 파일에 헤더 입력
         file_writer.writerow(column_name_list)
+
+        # 읽기용 파일을 한줄 씩 순회하면서 지정한 인덱스 열의 데이터만 쓰기용 파일에 입력
         for row_list in file_reader:
             output_list = [row_list[idx] for idx in column_index_list]
             file_writer.writerow(output_list)
 
 ```
 
-3. 우선 폴더에서 새로운 csv 입력 파일들을 만들고 별도의 출력 폴더를 만든다. 여러개의 파일을 처리하는 스크립트 중 하나를 사용하여 새로운 입력파일들을 처리하고 그 결과를 출력 파일로 만들어 해당 출력 폴더에 저장해보라.
+### 팬더스
+
+![screen 11](https://i.imgur.com/WAqy2k9.png)
+
+## 연습문제 3
+- 문제 : 우선 폴더에서 새로운 csv 입력 파일들을 만들고 별도의 출력 폴더를 만든다. 여러개의 파일을 처리하는 스크립트 중 하나를 사용하여 새로운 입력파일들을 처리하고 그 결과를 출력 파일로 만들어 해당 출력 폴더에 저장해보라.
+- 풀이 : deal_1.csv, deal_2.csv, deal_3.csv 을 하나의 파일로 합친 deal.csv 파일을 만들어서 저장한다.
+- 대상 파일 : 거울아거울아 컨플루언스 문서 참고
 
 ```python
 #!/usr/bin/env python3
@@ -159,9 +186,12 @@ import sys
 
 input_path = sys.argv[1]
 output_file = sys.argv[2]
+
+# 합칠 대상이 되는 파일 리스트 확인
 files = glob.glob(os.path.join(input_path, 'deal_*.csv'))
 
 header_exist = False
+
 
 for file in files:
     with open(file, 'r', newline='') as input:
@@ -169,13 +199,13 @@ for file in files:
             file_reader = csv.reader(input, delimiter=';')
             file_writer = csv.writer(output, delimiter=';')
             header = next(file_reader)
+
+            # 헤더 행은 한번만 입력
             if not header_exist:
                 file_writer.writerow(header)
                 header_exist = True
-                print(header)
+
+            # 헤더를 제외한 나머지 행을 입력
             for row in file_reader:
                 file_writer.writerow(row)
-                print(row)
-
-
 ```
